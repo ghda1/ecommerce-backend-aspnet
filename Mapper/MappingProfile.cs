@@ -27,10 +27,12 @@ public class MappingProfile : Profile
         // mapping for size
         CreateMap<string, Size>();
         CreateMap<Size, SizeDto>();
+        CreateMap<SizeDto, Size>();
 
         // mapping for Color 
         CreateMap<string, Color>();
         CreateMap<Color, ColorDto>();
+        CreateMap<ColorDto, Color>();
 
         // mapping for Order
         // CreateMap<Order, OrderDto>();

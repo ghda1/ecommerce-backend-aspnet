@@ -6,16 +6,14 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Backend.Migrations
 {
     /// <inheritdoc />
-    public partial class initial : Migration
+    public partial class inittial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterDatabase()
-                .Annotation("Npgsql:Enum:color", "red,blue,black,white,green")
                 .Annotation("Npgsql:Enum:material", "coton,crepe,silk")
                 .Annotation("Npgsql:Enum:payment_method", "credit_card,apple_pay,cash")
-                .Annotation("Npgsql:Enum:size", "small,large,medium")
                 .Annotation("Npgsql:Enum:status", "delivered,canceled,shipped,delayed");
 
             migrationBuilder.CreateTable(
@@ -23,9 +21,9 @@ namespace Backend.Migrations
                 columns: table => new
                 {
                     ProductId = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_generate_v4()"),
+                    Title = table.Column<string>(type: "text", nullable: false),
                     Image = table.Column<string>(type: "text", nullable: false),
-                    Size = table.Column<int>(type: "integer", nullable: false),
-                    Color = table.Column<int>(type: "integer", nullable: false),
+                    Price = table.Column<decimal>(type: "numeric", nullable: false),
                     Material = table.Column<int>(type: "integer", nullable: false),
                     Quantity = table.Column<int>(type: "integer", nullable: false)
                 },
@@ -49,6 +47,42 @@ namespace Backend.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.UserId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Colors",
+                columns: table => new
+                {
+                    ColorId = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_generate_v4()"),
+                    Value = table.Column<string>(type: "text", nullable: false),
+                    ProductId = table.Column<Guid>(type: "uuid", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Colors", x => x.ColorId);
+                    table.ForeignKey(
+                        name: "FK_Colors_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
+                        principalColumn: "ProductId");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Sizes",
+                columns: table => new
+                {
+                    SizeId = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_generate_v4()"),
+                    Value = table.Column<string>(type: "text", nullable: false),
+                    ProductId = table.Column<Guid>(type: "uuid", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Sizes", x => x.SizeId);
+                    table.ForeignKey(
+                        name: "FK_Sizes_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
+                        principalColumn: "ProductId");
                 });
 
             migrationBuilder.CreateTable(
@@ -104,11 +138,19 @@ namespace Backend.Migrations
                     Quantity = table.Column<int>(type: "integer", nullable: false),
                     TotalPrice = table.Column<decimal>(type: "numeric", nullable: false),
                     OrderId = table.Column<Guid>(type: "uuid", nullable: false),
-                    ProductId = table.Column<Guid>(type: "uuid", nullable: false)
+                    ProductId = table.Column<Guid>(type: "uuid", nullable: false),
+                    SizeId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ColorId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_OrderDetailses", x => x.OrdersDetailesId);
+                    table.ForeignKey(
+                        name: "FK_OrderDetailses_Colors_ColorId",
+                        column: x => x.ColorId,
+                        principalTable: "Colors",
+                        principalColumn: "ColorId",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_OrderDetailses_Orders_OrderId",
                         column: x => x.OrderId,
@@ -120,6 +162,12 @@ namespace Backend.Migrations
                         column: x => x.ProductId,
                         principalTable: "Products",
                         principalColumn: "ProductId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_OrderDetailses_Sizes_SizeId",
+                        column: x => x.SizeId,
+                        principalTable: "Sizes",
+                        principalColumn: "SizeId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -174,15 +222,19 @@ namespace Backend.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Addresses_AddressName",
-                table: "Addresses",
-                column: "AddressName",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Addresses_UserId",
                 table: "Addresses",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Colors_ProductId",
+                table: "Colors",
+                column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrderDetailses_ColorId",
+                table: "OrderDetailses",
+                column: "ColorId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_OrderDetailses_OrderId",
@@ -195,15 +247,14 @@ namespace Backend.Migrations
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_OrderDetailses_SizeId",
+                table: "OrderDetailses",
+                column: "SizeId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Orders_UserId",
                 table: "Orders",
                 column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Payments_CardNumber",
-                table: "Payments",
-                column: "CardNumber",
-                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Payments_OrderId",
@@ -229,6 +280,11 @@ namespace Backend.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_Sizes_ProductId",
+                table: "Sizes",
+                column: "ProductId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Users_Email",
                 table: "Users",
                 column: "Email",
@@ -251,10 +307,16 @@ namespace Backend.Migrations
                 name: "Shipments");
 
             migrationBuilder.DropTable(
-                name: "Products");
+                name: "Colors");
+
+            migrationBuilder.DropTable(
+                name: "Sizes");
 
             migrationBuilder.DropTable(
                 name: "Orders");
+
+            migrationBuilder.DropTable(
+                name: "Products");
 
             migrationBuilder.DropTable(
                 name: "Users");

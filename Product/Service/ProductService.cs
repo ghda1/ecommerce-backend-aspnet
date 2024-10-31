@@ -24,15 +24,24 @@ public class ProductService : IProductService
     {
         try
         {
+            System.Console.WriteLine("service layer to create a product");
             var product = _mapper.Map<Product>(newProduct);
             var sizes = new List<string>();
             foreach (var sizeId in newProduct.SizeIds)
             {
+                Console.WriteLine($"here 1");
+
                 var size = await _appDbContext.Sizes.FindAsync(sizeId);
+                Console.WriteLine($"here 2 {size}");
                 if (size != null)
                 {
+                    Console.WriteLine($"here 3");
                     var sizeValue = _mapper.Map<Size>(size.Value);
-                    product.Sizes.Add(sizeValue);
+
+                    Console.WriteLine($"here 4");
+                    product.Sizes.Add(size);
+                    await _appDbContext.Products.AddAsync(product);
+                    Console.WriteLine($"here 5");
                 }
                 else
                 {
@@ -45,8 +54,8 @@ public class ProductService : IProductService
                 var color = await _appDbContext.Colors.FindAsync(colorId);
                 if (color != null)
                 {
-                    var colorValue = _mapper.Map<Color>(color.Value);
-                    product.Colors.Add(colorValue);
+                    //    var colorValue = _mapper.Map<Color>(color.Value);
+                    product.Colors.Add(color);
                 }
                 else
                 {

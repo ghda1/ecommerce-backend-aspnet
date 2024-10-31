@@ -2,7 +2,7 @@
 GET http://localhost:5125/api/v1/users
 Bearer: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiQWRtaW4iLCJuYmYiOjE3MjgyODI3MjMsImV4cCI6MTcyODI4OTkyMywiaWF0IjoxNzI4MjgyNzIzLCJpc3MiOiJMb2NhbGhvc3RJc3N1ZXIiLCJhdWQiOiJMb2NhbGhvc3RBdWRpZW5jZSJ9.XZZSUGxbqyQ3S1Ri9nui7mX6d5O_4KzWJY3lNwfXLhw
 ###
-POST https://craftyourown.onrender.com/api/v1/users/login
+POST http://localhost:5125/api/v1/users/login
 Content-Type: application/json
 
 {

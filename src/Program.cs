@@ -11,6 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 DotNetEnv.Env.Load();
 
+
 builder.Services.AddAutoMapper(typeof(Program));
 
 
@@ -26,6 +27,18 @@ builder.Services.AddScoped<IShipmentService, ShipmentService>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddCors(options =>
+    {
+        options.AddPolicy("MyAllowSpecificOrigins", builder =>
+        {
+            builder.WithOrigins("http://localhost:5173"
+                    )
+                  .AllowAnyMethod()
+                  .AllowAnyHeader()
+                  .AllowCredentials();
+        });
+    });
 
 //Services Controller Configuration with JsonIgnore
 builder.Services.AddControllers()
@@ -129,19 +142,8 @@ app.Use(async (context, next) =>
     Console.WriteLine($"Time Taken: {stopwatch.ElapsedMilliseconds}");
 });
 
-// builder.Services.AddCors(options =>
-//     {
-//         options.AddPolicy("AllowSpecificOrigins", builder =>
-//         {
-//             builder.WithOrigins("http://localhost:3000",
-//                                 "https://www.yourclientapp.com"
-//                     )
-//                   .AllowAnyMethod()
-//                   .AllowAnyHeader()
-//                   .AllowCredentials();
-//         });
-//     });
-// app.UseCors("MyAllowSpecificOrigins");
+
+app.UseCors("MyAllowSpecificOrigins");
 
 app.UseAuthentication();
 app.UseAuthorization();

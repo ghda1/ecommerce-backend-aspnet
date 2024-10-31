@@ -20,6 +20,7 @@ builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<IUserAuthentication, UserAuthenticationService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ISizeService, SizeService>();
+builder.Services.AddScoped<IColorService, ColorService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IShipmentService, ShipmentService>();
 

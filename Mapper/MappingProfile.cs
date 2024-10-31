@@ -25,12 +25,11 @@ public class MappingProfile : Profile
         CreateMap<CreateProductDto, Product>();
 
         // mapping for size
-        CreateMap<string, Size>();
+
         CreateMap<Size, SizeDto>();
         CreateMap<SizeDto, Size>();
 
         // mapping for Color 
-        CreateMap<string, Color>();
         CreateMap<Color, ColorDto>();
         CreateMap<ColorDto, Color>();
 

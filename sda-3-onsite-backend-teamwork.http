@@ -14,7 +14,7 @@ GET http://localhost:5125/api/v1/users?pageNumber=1&pageSize=9&sortBy=lastname&s
 
 ###
 
-POST https://craftyourown.onrender.com/api/v1/users/register 
+POST http://localhost:5125/api/v1/users/register 
 Content-Type: application/json
 
 {
@@ -211,4 +211,15 @@ Content-Type: application/json
  "SizeIds": ["5e790c07-8708-4494-b030-40c564d466a0", "d2605993-dfd9-4b51-a620-dd7e4a02dfb5"
    ],
    "ColorIds": ["665aa99e-6610-403d-87b7-197fdb24942e","ec154c0a-df77-4197-be26-5c8e69a724cb" ]
+}
+
+{
+ "Image": "https://www.jacquemus.sa/ar/تي-شيرت-le-t-shirt-gros-grain/296126705698.html?gad_source=1&gbraid=0AAAAAqM6zO3QcnqFk0xvCaA3Duow2RMz4&gclid=Cj0KCQjwjY64BhCaARIsAIfc7YaC8jgS36e-Kujf4jjpVWXpA318qOGkqgt_OchOA63VFrJm54tnoaoaAjksEALw_wcB",
+ "Material": "coton",
+ "Quantity": 10, 
+ "Price": 40,
+ "Title": "T-shirt",
+ "SizeIds": ["cc5012dc-d7b8-4bab-8512-12072347d0a1", "23f60a69-c408-4430-b38b-764cd28418ab"
+   ],
+   "ColorIds": ["0134ab84-b193-42de-bd79-50cdff08c861","13467f71-4564-447d-905d-966e11b28774" ]
 }

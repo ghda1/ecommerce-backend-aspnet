@@ -8,5 +8,8 @@ public class Size
     [Required(ErrorMessage = "Size value is missing.")]
     public string Value { get; set; } = string.Empty;
 
+    public List<Product> Products { get; set; }
+
+
 }
 

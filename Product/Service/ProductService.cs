@@ -20,48 +20,44 @@ public class ProductService : IProductService
         _appDbContext = appDbContext;
         _mapper = mapper;
     }
+
     public async Task<ProductDto> CreateProductAsyncService(CreateProductDto newProduct)
     {
         try
         {
-            System.Console.WriteLine("service layer to create a product");
+            List<Size> listSizes = new List<Size>();
+            List<Color> listColors = new List<Color>();
+
             var product = _mapper.Map<Product>(newProduct);
-            var sizes = new List<string>();
+
             foreach (var sizeId in newProduct.SizeIds)
             {
-                Console.WriteLine($"here 1");
-
                 var size = await _appDbContext.Sizes.FindAsync(sizeId);
-                Console.WriteLine($"here 2 {size}");
+
                 if (size != null)
                 {
-                    Console.WriteLine($"here 3");
-                    var sizeValue = _mapper.Map<Size>(size.Value);
-
-                    Console.WriteLine($"here 4");
-                    product.Sizes.Add(size);
-                    await _appDbContext.Products.AddAsync(product);
-                    Console.WriteLine($"here 5");
+                    listSizes.Add(size);
                 }
                 else
                 {
                     throw new ApplicationException($"This size id {sizeId} does not exist in the sizes Db");
                 }
             }
+            product.Sizes = listSizes;
 
             foreach (var colorId in newProduct.ColorIds)
             {
                 var color = await _appDbContext.Colors.FindAsync(colorId);
                 if (color != null)
                 {
-                    //    var colorValue = _mapper.Map<Color>(color.Value);
-                    product.Colors.Add(color);
+                    listColors.Add(color);
                 }
                 else
                 {
                     throw new ApplicationException($"This color id {colorId} does not exist in the colors Db");
                 }
             }
+            product.Colors = listColors;
 
             await _appDbContext.Products.AddAsync(product);
             await _appDbContext.SaveChangesAsync();
@@ -190,36 +186,40 @@ public class ProductService : IProductService
 
             if (updateProduct.SizeIds != null)
             {
+                List<Size> listSizes = new List<Size>();
                 foreach (var sizeId in updateProduct.SizeIds)
                 {
                     var size = await _appDbContext.Sizes.FindAsync(sizeId);
+
                     if (size != null)
                     {
-                        var sizeValue = _mapper.Map<Size>(size.Value);
-                        product.Sizes.Add(sizeValue);
+                        listSizes.Add(size);
                     }
                     else
                     {
                         throw new ApplicationException($"This size id {sizeId} does not exist in the sizes Db");
                     }
                 }
+                product.Sizes = listSizes;
+
             }
 
             if (updateProduct.ColorIds != null)
             {
+                List<Color> listColors = new List<Color>();
                 foreach (var colorId in updateProduct.ColorIds)
                 {
                     var color = await _appDbContext.Colors.FindAsync(colorId);
                     if (color != null)
                     {
-                        var colorValue = _mapper.Map<Color>(color.Value);
-                        product.Colors.Add(colorValue);
+                        listColors.Add(color);
                     }
                     else
                     {
-                        throw new ApplicationException($"This size id {colorId} does not exist in the sizes Db");
+                        throw new ApplicationException($"This color id {colorId} does not exist in the colors Db");
                     }
                 }
+                product.Colors = listColors;
             }
 
             _appDbContext.Products.Update(product);

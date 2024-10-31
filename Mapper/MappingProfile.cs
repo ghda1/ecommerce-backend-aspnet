@@ -24,6 +24,14 @@ public class MappingProfile : Profile
         CreateMap<UpdateProductDto, ProductDto>();
         CreateMap<CreateProductDto, Product>();
 
+        // mapping for size
+        CreateMap<string, Size>();
+        CreateMap<Size, SizeDto>();
+
+        // mapping for Color 
+        CreateMap<string, Color>();
+        CreateMap<Color, ColorDto>();
+
         // mapping for Order
         // CreateMap<Order, OrderDto>();
         CreateMap<CreateOrderDto, Order>();

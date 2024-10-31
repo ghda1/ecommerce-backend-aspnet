@@ -13,6 +13,7 @@ public class ProductController : ControllerBase
     }
 
     // Post: "/api/v1/products" => create new product
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     public async Task<IActionResult> CreateProductAsync([FromBody] CreateProductDto newProduct)
     {
@@ -37,7 +38,6 @@ public class ProductController : ControllerBase
     }
 
     // Get: "/api/v1/products" => get all products
-    [Authorize (Roles = "Admin")]
     [HttpGet]
     public async Task<IActionResult> GetProductsAsync(int pageNumber = 1, int pageSize = 3, string? searchQuery = null, string? sortBy = null, string? sortOrder = "asc")
     {
@@ -91,7 +91,7 @@ public class ProductController : ControllerBase
     }
 
     // Delete: "/api/v1/products/{productId}" => delete product by id
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     [HttpDelete("{productId}")]
     public async Task<IActionResult> DeleteProductByIdAsync(Guid productId)
     {
@@ -116,7 +116,7 @@ public class ProductController : ControllerBase
     }
 
     // Put: "/api/v1/products/{productId}" => update product by id
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     [HttpPut("{productId}")]
     public async Task<IActionResult> UpdateProductByIdAsync(Guid productId, [FromBody] UpdateProductDto updateProduct)
     {

@@ -20,13 +20,40 @@ public class ProductService : IProductService
         _appDbContext = appDbContext;
         _mapper = mapper;
     }
-
-    // Create Product
     public async Task<ProductDto> CreateProductAsyncService(CreateProductDto newProduct)
     {
         try
         {
             var product = _mapper.Map<Product>(newProduct);
+            var sizes = new List<string>();
+            foreach (var sizeId in newProduct.SizeIds)
+            {
+                var size = await _appDbContext.Sizes.FindAsync(sizeId);
+                if (size != null)
+                {
+                    var sizeValue = _mapper.Map<Size>(size.Value);
+                    product.Sizes.Add(sizeValue);
+                }
+                else
+                {
+                    throw new ApplicationException($"This size id {sizeId} does not exist in the sizes Db");
+                }
+            }
+
+            foreach (var colorId in newProduct.ColorIds)
+            {
+                var color = await _appDbContext.Colors.FindAsync(colorId);
+                if (color != null)
+                {
+                    var colorValue = _mapper.Map<Color>(color.Value);
+                    product.Colors.Add(colorValue);
+                }
+                else
+                {
+                    throw new ApplicationException($"This color id {colorId} does not exist in the colors Db");
+                }
+            }
+
             await _appDbContext.Products.AddAsync(product);
             await _appDbContext.SaveChangesAsync();
             var productData = _mapper.Map<ProductDto>(product);
@@ -49,12 +76,12 @@ public class ProductService : IProductService
     {
         try
         {
-            var products = await _appDbContext.Products.ToListAsync();
-            // using query to search for all the products whos matching the image otherwise return null
+            var products = await _appDbContext.Products.Include(p => p.Sizes).Include(p => p.Colors).ToListAsync();
+            // using query to search for all the products whos matching the title otherwise return null
             var filterProduct = products.AsQueryable();
             if (!string.IsNullOrEmpty(searchQuery))
             {
-                filterProduct = filterProduct.Where(p => p.Image.Contains(searchQuery, StringComparison.OrdinalIgnoreCase));
+                filterProduct = filterProduct.Where(p => p.Title.Contains(searchQuery, StringComparison.OrdinalIgnoreCase));
                 if (filterProduct.Count() == 0)
                 {
                     var exisitingProduct = _mapper.Map<List<ProductDto>>(filterProduct);
@@ -64,10 +91,9 @@ public class ProductService : IProductService
             // sort the list of product dependes on size or color or meterial as desc or asc othwewise shows the default
             filterProduct = sortBy?.ToLower() switch
             {
-                "size" => sortOrder == "desc" ? filterProduct.OrderByDescending(p => p.Size) : filterProduct.OrderBy(p => p.Size),
-                "color" => sortOrder == "desc" ? filterProduct.OrderByDescending(p => p.Color) : filterProduct.OrderBy(p => p.Color),
-                "meterial" => sortOrder == "desc" ? filterProduct.OrderByDescending(p => p.Material) : filterProduct.OrderBy(p => p.Material),
-                _ => filterProduct.OrderBy(p => p.Material) // default 
+                "title" => sortOrder == "desc" ? filterProduct.OrderByDescending(p => p.Title) : filterProduct.OrderBy(p => p.Title),
+                "price" => sortOrder == "desc" ? filterProduct.OrderByDescending(p => p.Price) : filterProduct.OrderBy(p => p.Price),
+                _ => filterProduct.OrderBy(p => p.Title) // default 
             };
             // return the result in pagination 
             var paginationResult = filterProduct.Skip((pageNumber - 1) * pageSize).Take(pageSize);
@@ -148,10 +174,44 @@ public class ProductService : IProductService
                 return null;
             }
 
-            product.Size = updateProduct.Size ?? product.Size;
-            product.Color = updateProduct.Color ?? product.Color;
             product.Material = updateProduct.Material ?? product.Material;
             product.Image = updateProduct.Image ?? product.Image;
+            product.Title = updateProduct.Title ?? product.Title;
+            product.Price = updateProduct.Price ?? product.Price;
+
+            if (updateProduct.SizeIds != null)
+            {
+                foreach (var sizeId in updateProduct.SizeIds)
+                {
+                    var size = await _appDbContext.Sizes.FindAsync(sizeId);
+                    if (size != null)
+                    {
+                        var sizeValue = _mapper.Map<Size>(size.Value);
+                        product.Sizes.Add(sizeValue);
+                    }
+                    else
+                    {
+                        throw new ApplicationException($"This size id {sizeId} does not exist in the sizes Db");
+                    }
+                }
+            }
+
+            if (updateProduct.ColorIds != null)
+            {
+                foreach (var colorId in updateProduct.ColorIds)
+                {
+                    var color = await _appDbContext.Colors.FindAsync(colorId);
+                    if (color != null)
+                    {
+                        var colorValue = _mapper.Map<Color>(color.Value);
+                        product.Colors.Add(colorValue);
+                    }
+                    else
+                    {
+                        throw new ApplicationException($"This size id {colorId} does not exist in the sizes Db");
+                    }
+                }
+            }
 
             _appDbContext.Products.Update(product);
             await _appDbContext.SaveChangesAsync();

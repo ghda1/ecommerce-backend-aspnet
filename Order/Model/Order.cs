@@ -7,13 +7,12 @@ public class Order
     public int Quantity { get; set; }
     public decimal TotalPrice { get; set; }
 
-
     // one user has many orders
     public Guid UserId { get; set; } //FK
     [JsonIgnore]
     public User User { get; set; }
 
-    // one order has one orderDetailses
+    // one order has many orderDetailses
     [JsonIgnore]
     public List<OrderDetails> OrderDetails { get; set; }
 

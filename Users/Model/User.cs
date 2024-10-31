@@ -20,5 +20,6 @@ public class User
     public List<Payment> Payments { get; set; }
 
     // one user has many orders
+    [JsonIgnore]
     public List<Order> Orders {get; set;}
 }

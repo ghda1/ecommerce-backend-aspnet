@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 
 public interface IOrderService
 {
-    // Task<OrderDto> CreateOrderAsyncService(CreateOrderDto newOrder);
     Task<OrderDto> CheckoutOrderAsyncService(CreateOrderDto checkoutItem);
     Task<List<OrderDto>> GetOrdersAsyncService(int pageNumber, int pageSize);
     Task<OrderDto?> GetOrderByIdAsyncService(Guid orderId);
@@ -33,7 +32,6 @@ public class OrderService : IOrderService
             {
                 throw new Exception($"There is no  user with this id {checkoutItem.UserId}");
             }
-            // [12323, 232332,54545,7676]
             var order = new Order();
 
             order.User = userFound;
@@ -51,6 +49,16 @@ public class OrderService : IOrderService
                 {
                     throw new Exception($"There is no product with this id {orderdetails.ProductId}.");
                 }
+                var foundSize = _appDbContext.Sizes.FirstOrDefault(s => s.SizeId == orderdetails.SizeId);
+                if (foundSize == null)
+                {
+                    throw new Exception($"There is no size with this id {orderdetails.SizeId}.");
+                }
+                var foundColor = _appDbContext.Colors.FirstOrDefault(c => c.ColorId == orderdetails.ColorId);
+                if (foundColor == null)
+                {
+                    throw new Exception($"There is no color with this id {orderdetails.ColorId}.");
+                }
                 if (foundProduct.Quantity < orderdetails.Quantity)
                 {
                     throw new Exception("You try to order more than we have.");
@@ -61,6 +69,8 @@ public class OrderService : IOrderService
                 orderDetail.OrderId = order.OrderId;
                 orderDetail.Quantity = orderdetails.Quantity;
                 orderDetail.ProductId = foundProduct.ProductId;
+                orderDetail.SizeId = foundSize.SizeId;
+                orderDetail.ColorId = foundColor.ColorId;
                 orderDetail.TotalPrice = foundProduct.Price * orderdetails.Quantity;
 
                 await _appDbContext.OrderDetailses.AddAsync(orderDetail);

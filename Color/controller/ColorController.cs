@@ -4,31 +4,31 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
-[Route("api/v1/orders")]
-public class OrderController : ControllerBase
+[Route("api/v1/colors")]
+public class ColorController : ControllerBase
 {
-    private readonly IOrderService _service;
+    private readonly IColorService _service;
 
-    public OrderController(IOrderService service)
+    public ColorController(IColorService service)
     {
         _service = service;
     }
 
-    // GET: api/order/{id}
+    // GET: api/colors/{id}
     [Authorize]
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetOrderById(Guid id)
+    public async Task<IActionResult> GetColorById(Guid id)
     {
         try
         {
-            var order = await _service.GetOrderByIdAsyncService(id);
+            var color = await _service.GetColorByIdAsyncService(id);
 
-            if (order == null)
+            if (color == null)
             {
-                return ApiResponses.NotFound("Order not found");
+                return ApiResponses.NotFound("Color not found");
             }
 
-            return ApiResponses.Success(order, "Order returned successfully");
+            return ApiResponses.Success(color, "Color returned successfully");
         }
         catch (ApplicationException ex)
         {
@@ -40,25 +40,21 @@ public class OrderController : ControllerBase
         }
     }
 
-    // GET: api/order
+    // GET: api/color
     [Authorize(Roles = "Admin")]
     [HttpGet]
-    public async Task<IActionResult> GetAllOrders(int pageNumber = 1, int pageSize = 3)
+    public async Task<IActionResult> GetAllColors()
     {
         try
         {
-            if (pageNumber < 1 || pageSize < 1)
-            {
-                return ApiResponses.BadRequest("Page number and page size should be greater than 0.");
-            }
-            var orders = await _service.GetOrdersAsyncService(pageNumber, pageSize);
+            var colors = await _service.GetColorsAsyncService();
 
-            if (orders.Count() == 0)
+            if (colors.Count() == 0)
             {
-                return ApiResponses.NotFound("No orders found");
+                return ApiResponses.NotFound("No colors found");
             }
 
-            return ApiResponses.Success(orders, "Orders retrieved successfully");
+            return ApiResponses.Success(colors, "Colors retrieved successfully");
 
 
         }
@@ -72,15 +68,15 @@ public class OrderController : ControllerBase
         }
     }
 
-    // POST: api/order
+    // POST: api/colors
     [Authorize]
     [HttpPost]
-    public async Task<IActionResult> CreateOrder([FromBody] CreateOrderDto newOrder)
+    public async Task<IActionResult> CreateColor([FromBody] ColorDto newColor)
     {
         try
         {
-            var order = await _service.CheckoutOrderAsyncService(newOrder);
-            return ApiResponses.Created(order, "Order created successfully");
+            var color = await _service.CreateColorAsyncService(newColor);
+            return ApiResponses.Created(color, "Color created successfully");
         }
         catch (ApplicationException ex)
         {
@@ -92,20 +88,20 @@ public class OrderController : ControllerBase
         }
     }
 
-    // DELETE: api/order/{id}
+    // DELETE: api/colors/{id}
     [Authorize]
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteOrder(Guid id)
+    public async Task<IActionResult> DeleteColor(Guid id)
     {
         try
         {
-            var order = await _service.DeleteOrderByIdAsyncService(id);
-            if (!order)
+            var color = await _service.DeleteColorByIdAsyncService(id);
+            if (!color)
             {
-                return ApiResponses.NotFound("Order not found");
+                return ApiResponses.NotFound("Color not found");
             }
 
-            return ApiResponses.Success("Order deleted successfully");
+            return ApiResponses.Success("Color deleted successfully");
         }
         catch (ApplicationException ex)
         {

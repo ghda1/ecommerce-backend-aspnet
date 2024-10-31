@@ -7,5 +7,7 @@ public class OrderDetailsDto
     // one product has many order details
     //public Guid ProductId { get; set; }
     public ProductDto Product { get; set; }
+    public SizeDto Size { get; set; }
+    public ColorDto Color { get; set; }
 
 }

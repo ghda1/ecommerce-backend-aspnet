@@ -4,31 +4,31 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
-[Route("api/v1/orders")]
-public class OrderController : ControllerBase
+[Route("api/v1/sizes")]
+public class SizeController : ControllerBase
 {
-    private readonly IOrderService _service;
+    private readonly ISizeService _service;
 
-    public OrderController(IOrderService service)
+    public SizeController(ISizeService service)
     {
         _service = service;
     }
 
-    // GET: api/order/{id}
+    // GET: api/sizes/{id}
     [Authorize]
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetOrderById(Guid id)
+    public async Task<IActionResult> GetSizeById(Guid id)
     {
         try
         {
-            var order = await _service.GetOrderByIdAsyncService(id);
+            var size = await _service.GetSizeByIdAsyncService(id);
 
-            if (order == null)
+            if (size == null)
             {
-                return ApiResponses.NotFound("Order not found");
+                return ApiResponses.NotFound("Size not found");
             }
 
-            return ApiResponses.Success(order, "Order returned successfully");
+            return ApiResponses.Success(size, "Size returned successfully");
         }
         catch (ApplicationException ex)
         {
@@ -40,25 +40,21 @@ public class OrderController : ControllerBase
         }
     }
 
-    // GET: api/order
+    // GET: api/sizes
     [Authorize(Roles = "Admin")]
     [HttpGet]
-    public async Task<IActionResult> GetAllOrders(int pageNumber = 1, int pageSize = 3)
+    public async Task<IActionResult> GetAllSizes()
     {
         try
         {
-            if (pageNumber < 1 || pageSize < 1)
-            {
-                return ApiResponses.BadRequest("Page number and page size should be greater than 0.");
-            }
-            var orders = await _service.GetOrdersAsyncService(pageNumber, pageSize);
+            var sizes = await _service.GetSizesAsyncService();
 
-            if (orders.Count() == 0)
+            if (sizes.Count() == 0)
             {
-                return ApiResponses.NotFound("No orders found");
+                return ApiResponses.NotFound("No sizes found");
             }
 
-            return ApiResponses.Success(orders, "Orders retrieved successfully");
+            return ApiResponses.Success(sizes, "Sizes retrieved successfully");
 
 
         }
@@ -72,15 +68,15 @@ public class OrderController : ControllerBase
         }
     }
 
-    // POST: api/order
+    // POST: api/sizes
     [Authorize]
     [HttpPost]
-    public async Task<IActionResult> CreateOrder([FromBody] CreateOrderDto newOrder)
+    public async Task<IActionResult> CreateSize([FromBody] SizeDto newSize)
     {
         try
         {
-            var order = await _service.CheckoutOrderAsyncService(newOrder);
-            return ApiResponses.Created(order, "Order created successfully");
+            var size = await _service.CreateSizeAsyncService(newSize);
+            return ApiResponses.Created(size, "Size created successfully");
         }
         catch (ApplicationException ex)
         {
@@ -92,20 +88,20 @@ public class OrderController : ControllerBase
         }
     }
 
-    // DELETE: api/order/{id}
+    // DELETE: api/sizes/{id}
     [Authorize]
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteOrder(Guid id)
+    public async Task<IActionResult> DeleteSize(Guid id)
     {
         try
         {
-            var order = await _service.DeleteOrderByIdAsyncService(id);
-            if (!order)
+            var size = await _service.DeleteSizeByIdAsyncService(id);
+            if (!size)
             {
-                return ApiResponses.NotFound("Order not found");
+                return ApiResponses.NotFound("Size not found");
             }
 
-            return ApiResponses.Success("Order deleted successfully");
+            return ApiResponses.Success("Size deleted successfully");
         }
         catch (ApplicationException ex)
         {

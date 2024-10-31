@@ -75,7 +75,7 @@ public class AddressController : ControllerBase
             var address = await _addressService.GetAddressByIdAsyncService(addressId);
             if (address == null)
             {
-                return ApiResponses.NotFound("Address does not exisit");
+                return ApiResponses.NotFound("Address does not exisit or the user has been deleted");
             }
             return ApiResponses.Success(address, "Address is returned successfully");
         }

@@ -47,8 +47,6 @@ builder.Services.AddDbContext<AppDBContext>(options =>
 
 var dataSourceBuilder = new NpgsqlDataSourceBuilder(Configuration.GetConnectionString("Local"));
 dataSourceBuilder.MapEnum<PaymentMethod>();
-dataSourceBuilder.MapEnum<Size>();
-dataSourceBuilder.MapEnum<Color>();
 dataSourceBuilder.MapEnum<Material>();
 dataSourceBuilder.MapEnum<Status>();
 

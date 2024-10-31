@@ -8,6 +8,8 @@ public class AppDBContext : DbContext
     public DbSet<Address> Addresses { get; set; }
     public DbSet<Payment> Payments { get; set; }
     public DbSet<Product> Products { get; set; }
+    public DbSet<Size> Sizes { get; set; }
+    public DbSet<Color> Colors { get; set; }
     public DbSet<Order> Orders { get; set; }
     public DbSet<OrderDetails> OrderDetailses { get; set; }
     public DbSet<Shipment> Shipments { get; set; }
@@ -32,7 +34,6 @@ public class AppDBContext : DbContext
             address.HasKey(a => a.AddressId);
             address.Property(a => a.AddressId).HasDefaultValueSql("uuid_generate_v4()");
             address.Property(a => a.AddressName).IsRequired().HasMaxLength(55);
-            address.HasIndex(a => a.AddressName).IsUnique();
             address.Property(a => a.StreetName).IsRequired().HasMaxLength(55);
             address.Property(a => a.StreetNumber).IsRequired().HasMaxLength(20);
             address.Property(a => a.City).IsRequired().HasMaxLength(55);
@@ -40,13 +41,11 @@ public class AppDBContext : DbContext
 
         });
 
-
         // fluent api for Payment
         modelBuilder.Entity<Payment>(payment =>
         {
             payment.HasKey(p => p.PaymentId);
             payment.Property(p => p.PaymentId).HasDefaultValueSql("uuid_generate_v4()");
-            payment.HasIndex(p => p.CardNumber).IsUnique();
             payment.Property(p => p.CardNumber).IsRequired();
             payment.Property(p => p.PaymentMethod).IsRequired();
             payment.Property(p => p.TotalPrice).IsRequired();
@@ -59,6 +58,24 @@ public class AppDBContext : DbContext
             product.HasKey(p => p.ProductId);
             product.Property(p => p.ProductId).HasDefaultValueSql("uuid_generate_v4()");
             product.HasIndex(p => p.Image).IsUnique();
+
+        });
+
+        // fluent api for Size
+        modelBuilder.Entity<Size>(size =>
+        {
+            size.HasKey(s => s.SizeId);
+            size.Property(s => s.SizeId).HasDefaultValueSql("uuid_generate_v4()");
+            size.Property(s => s.Value).IsRequired();
+
+        });
+
+        // fluent api for Color
+        modelBuilder.Entity<Color>(color =>
+        {
+            color.HasKey(c => c.ColorId);
+            color.Property(c => c.ColorId).HasDefaultValueSql("uuid_generate_v4()");
+            color.Property(c => c.Value).IsRequired();
 
         });
 
@@ -84,8 +101,6 @@ public class AppDBContext : DbContext
         });
 
         modelBuilder.HasPostgresEnum<PaymentMethod>();
-        modelBuilder.HasPostgresEnum<Size>();
-        modelBuilder.HasPostgresEnum<Color>();
         modelBuilder.HasPostgresEnum<Material>();
         modelBuilder.HasPostgresEnum<Status>();
 
@@ -95,7 +110,6 @@ public class AppDBContext : DbContext
         .WithOne(a => a.User)
         .HasForeignKey(a => a.UserId)
         .OnDelete(DeleteBehavior.Cascade);
-
 
         // one user has many payments
         modelBuilder.Entity<User>()

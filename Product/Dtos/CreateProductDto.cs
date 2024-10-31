@@ -13,8 +13,8 @@ public class CreateProductDto
     public List<Guid> SizeIds { get; set; }
 
     [Required(ErrorMessage = "ColorIds is missing.")]
-    public List<Color> ColorIds { get; set; }
-    
+    public List<Guid> ColorIds { get; set; }
+
     [Required(ErrorMessage = "Material is missing.")]
     public Material Material { get; set; }
 

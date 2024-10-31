@@ -202,4 +202,13 @@ Content-Type: application/json
     "cardNumber": "111111111111111"
   }
   ###
-  
+  {
+ "Image": "https://www.jacquemus.sa/ar/تي-شيرت-le-t-shirt-gros-grain/296126705698.html?gad_source=1&gbraid=0AAAAAqM6zO3QcnqFk0xvCaA3Duow2RMz4&gclid=Cj0KCQjwjY64BhCaARIsAIfc7YaC8jgS36e-Kujf4jjpVWXpA318qOGkqgt_OchOA63VFrJm54tnoaoaAjksEALw_wcB",
+ "Material": "coton",
+ "Quantity": 10, 
+ "Price": 40,
+ "Title": "T-shirt",
+ "SizeIds": ["5e790c07-8708-4494-b030-40c564d466a0", "d2605993-dfd9-4b51-a620-dd7e4a02dfb5"
+   ],
+   "ColorIds": ["665aa99e-6610-403d-87b7-197fdb24942e","ec154c0a-df77-4197-be26-5c8e69a724cb" ]
+}

@@ -19,7 +19,7 @@ namespace Backend.Migrations
                 .HasAnnotation("ProductVersion", "8.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "material", new[] { "coton", "crepe", "silk" });
+            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "material", new[] { "coton", "polyester", "blend", "linen", "crepe", "rayon", "silk" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "payment_method", new[] { "credit_card", "apple_pay", "cash" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "status", new[] { "delivered", "canceled", "shipped", "delayed" });
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);

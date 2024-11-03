@@ -5,6 +5,10 @@ using System.Text.Json.Serialization;
 public enum Material
 {
     Coton,
+    Polyester,
+    Blend,
+    Linen,
     Crepe,
+    Rayon,
     Silk
 }

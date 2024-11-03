@@ -12,7 +12,7 @@ namespace Backend.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterDatabase()
-                .Annotation("Npgsql:Enum:material", "coton,crepe,silk")
+                .Annotation("Npgsql:Enum:material", "coton,polyester,blend,linen,crepe,rayon,silk")
                 .Annotation("Npgsql:Enum:payment_method", "credit_card,apple_pay,cash")
                 .Annotation("Npgsql:Enum:status", "delivered,canceled,shipped,delayed");
 

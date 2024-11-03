@@ -66,7 +66,7 @@ public class ProductController : ControllerBase
     }
 
     // Get: "/api/v1/products/{productId}" => get specific product by id
-    [Authorize]
+    // [Authorize]
     [HttpGet("{productId}")]
     public async Task<IActionResult> GetProductByIdAsync(Guid productId)
     {

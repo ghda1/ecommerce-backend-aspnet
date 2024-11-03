@@ -1,4 +1,5 @@
 // Payment Model
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 public class Payment
@@ -10,12 +11,14 @@ public class Payment
     public decimal TotalPrice { get; set; } = 0;
 
     // one user has many payments
-    public Guid UserId { get; set; } //FK
+    public Guid UserId { get; set; }
+
     [JsonIgnore]
     public User User { get; set; }
 
     // one order one payment
     public Guid OrderId { get; set; }
+
     [JsonIgnore]
     public Order Order { get; set; }
 

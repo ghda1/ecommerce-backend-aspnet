@@ -44,7 +44,7 @@ public class ProductService : IProductService
                 }
             }
             product.Sizes = listSizes;
-
+            
             foreach (var colorId in newProduct.ColorIds)
             {
                 var color = await _appDbContext.Colors.FindAsync(colorId);
@@ -62,6 +62,7 @@ public class ProductService : IProductService
             await _appDbContext.Products.AddAsync(product);
             await _appDbContext.SaveChangesAsync();
             var productData = _mapper.Map<ProductDto>(product);
+
             return productData;
         }
         catch (DbUpdateException dbEx)

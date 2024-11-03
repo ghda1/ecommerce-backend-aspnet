@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Backend.Migrations
 {
     [DbContext(typeof(AppDBContext))]
-    [Migration("20241031075241_inittial")]
+    [Migration("20241102191222_inittial")]
     partial class inittial
     {
         /// <inheritdoc />
@@ -76,18 +76,28 @@ namespace Backend.Migrations
                         .HasColumnType("uuid")
                         .HasDefaultValueSql("uuid_generate_v4()");
 
-                    b.Property<Guid?>("ProductId")
-                        .HasColumnType("uuid");
-
                     b.Property<string>("Value")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("ColorId");
 
-                    b.HasIndex("ProductId");
-
                     b.ToTable("Colors");
+                });
+
+            modelBuilder.Entity("ColorProduct", b =>
+                {
+                    b.Property<Guid>("ColorsColorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ProductsProductId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("ColorsColorId", "ProductsProductId");
+
+                    b.HasIndex("ProductsProductId");
+
+                    b.ToTable("ColorProduct");
                 });
 
             modelBuilder.Entity("Order", b =>
@@ -222,6 +232,21 @@ namespace Backend.Migrations
                     b.ToTable("Products");
                 });
 
+            modelBuilder.Entity("ProductSize", b =>
+                {
+                    b.Property<Guid>("ProductsProductId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("SizesSizeId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("ProductsProductId", "SizesSizeId");
+
+                    b.HasIndex("SizesSizeId");
+
+                    b.ToTable("ProductSize");
+                });
+
             modelBuilder.Entity("Shipment", b =>
                 {
                     b.Property<Guid>("ShipmentId")
@@ -259,16 +284,11 @@ namespace Backend.Migrations
                         .HasColumnType("uuid")
                         .HasDefaultValueSql("uuid_generate_v4()");
 
-                    b.Property<Guid?>("ProductId")
-                        .HasColumnType("uuid");
-
                     b.Property<string>("Value")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("SizeId");
-
-                    b.HasIndex("ProductId");
 
                     b.ToTable("Sizes");
                 });
@@ -323,11 +343,19 @@ namespace Backend.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Color", b =>
+            modelBuilder.Entity("ColorProduct", b =>
                 {
+                    b.HasOne("Color", null)
+                        .WithMany()
+                        .HasForeignKey("ColorsColorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Product", null)
-                        .WithMany("Colors")
-                        .HasForeignKey("ProductId");
+                        .WithMany()
+                        .HasForeignKey("ProductsProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Order", b =>
@@ -395,6 +423,21 @@ namespace Backend.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("ProductSize", b =>
+                {
+                    b.HasOne("Product", null)
+                        .WithMany()
+                        .HasForeignKey("ProductsProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Size", null)
+                        .WithMany()
+                        .HasForeignKey("SizesSizeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Shipment", b =>
                 {
                     b.HasOne("Order", "Order")
@@ -404,13 +447,6 @@ namespace Backend.Migrations
                         .IsRequired();
 
                     b.Navigation("Order");
-                });
-
-            modelBuilder.Entity("Size", b =>
-                {
-                    b.HasOne("Product", null)
-                        .WithMany("Sizes")
-                        .HasForeignKey("ProductId");
                 });
 
             modelBuilder.Entity("Order", b =>
@@ -426,11 +462,7 @@ namespace Backend.Migrations
 
             modelBuilder.Entity("Product", b =>
                 {
-                    b.Navigation("Colors");
-
                     b.Navigation("OrderDetailses");
-
-                    b.Navigation("Sizes");
                 });
 
             modelBuilder.Entity("User", b =>

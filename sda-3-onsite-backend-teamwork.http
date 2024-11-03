@@ -85,7 +85,7 @@ Content-Type: application/json
     "paymentMethod": "Cash",  
     "cardNumber": "11111111111111119911",  
     "totalPrice":  222,
-    "UserId": "da73cf72-f66c-41fb-92a6-ad8ce4465082"
+    "UserId": "eb712eb6-80b7-487d-8f02-126b13dbada1"
   
 }
 
@@ -223,3 +223,17 @@ Content-Type: application/json
    ],
    "ColorIds": ["0134ab84-b193-42de-bd79-50cdff08c861","13467f71-4564-447d-905d-966e11b28774" ]
 }
+
+{
+  "userId": "b0423cc7-5c5c-44b7-9be4-6d010ac7c22c",
+  "orderDetailses":[
+    {
+      "quantity": 4,
+      "productId": "b0853820-28cd-413a-ac62-ace83975a17b",
+      "sizeId": "d08b284c-fe28-4fa9-abcb-0ae14fef7067",
+      "colorId": "42a32aa8-5cce-4cc6-9ca8-7de57bfb8a63"
+      
+    }],
+        "paymentMethod": "CreditCard",  
+    "cardNumber": "111111111111112"
+  }

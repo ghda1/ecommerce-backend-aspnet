@@ -70,7 +70,9 @@ public class OrderService : IOrderService
                 orderDetail.Quantity = orderdetails.Quantity;
                 orderDetail.ProductId = foundProduct.ProductId;
                 orderDetail.SizeId = foundSize.SizeId;
+                orderDetail.Size = foundSize;
                 orderDetail.ColorId = foundColor.ColorId;
+                orderDetail.Color = foundColor;
                 orderDetail.TotalPrice = foundProduct.Price * orderdetails.Quantity;
 
                 await _appDbContext.OrderDetailses.AddAsync(orderDetail);

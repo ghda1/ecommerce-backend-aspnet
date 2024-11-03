@@ -9,6 +9,7 @@ public class Color
 
     [Required(ErrorMessage = "Color value is missing.")]
     public string Value { get; set; } = string.Empty;
+
     [JsonIgnore]
     public List<Product> Products { get; set; }
 }

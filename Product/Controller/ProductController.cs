@@ -39,17 +39,17 @@ public class ProductController : ControllerBase
 
     // Get: "/api/v1/products" => get all products
     [HttpGet]
-    public async Task<IActionResult> GetProductsAsync(int pageNumber = 1, int pageSize = 3, string? searchQuery = null, string? sortBy = null, string? sortOrder = "asc")
+    public async Task<IActionResult> GetProductsAsync(PaginationQuery paginationQuery)
     {
         try
         {
-            if (pageNumber < 1 || pageSize < 1)
+            if (paginationQuery.PageNumber < 1 || paginationQuery.PageSize < 1)
             {
                 return ApiResponses.BadRequest("Page number and page size should be greater than 0.");
             }
 
-            var products = await _productService.GetProductsAsyncService(pageNumber, pageSize, searchQuery, sortBy, sortOrder);
-            if (products.Count() == 0)
+            var products = await _productService.GetProductsAsyncService(paginationQuery);
+            if (products.Items.Count() == 0)
             {
                 return ApiResponses.NotFound("The list of products is empty or you try to search for not exisiting product.");
             }

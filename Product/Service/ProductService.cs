@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 public interface IProductService
 {
-    Task<List<ProductDto>> GetProductsAsyncService(int pageNumber, int pageSize, string searchQuery, string sortBy, string sortOrder);
+    Task<PaginatedResult<ProductDto>> GetProductsAsyncService(PaginationQuery paginationQuery);
     Task<ProductDto> CreateProductAsyncService(CreateProductDto newProduct);
     Task<ProductDto?> GetProductByIdAsyncService(Guid productId);
     Task<bool> DeleteProductByIdAsyncService(Guid productId);
@@ -44,7 +44,7 @@ public class ProductService : IProductService
                 }
             }
             product.Sizes = listSizes;
-            
+
             foreach (var colorId in newProduct.ColorIds)
             {
                 var color = await _appDbContext.Colors.FindAsync(colorId);
@@ -78,33 +78,45 @@ public class ProductService : IProductService
     }
 
     // Get all products
-    public async Task<List<ProductDto>> GetProductsAsyncService(int pageNumber, int pageSize, string searchQuery, string sortBy, string sortOrder)
+    public async Task<PaginatedResult<ProductDto>> GetProductsAsyncService(PaginationQuery paginationQuery)
     {
         try
         {
             var products = await _appDbContext.Products.Include(p => p.Sizes).Include(p => p.Colors).ToListAsync();
             // using query to search for all the products whos matching the title otherwise return null
             var filterProduct = products.AsQueryable();
-            if (!string.IsNullOrEmpty(searchQuery))
+            if (!string.IsNullOrEmpty(paginationQuery.SearchQuery))
             {
-                filterProduct = filterProduct.Where(p => p.Title.Contains(searchQuery, StringComparison.OrdinalIgnoreCase));
+                filterProduct = filterProduct.Where(p => p.Title.Contains(paginationQuery.SearchQuery, StringComparison.OrdinalIgnoreCase));
                 if (filterProduct.Count() == 0)
                 {
                     var exisitingProduct = _mapper.Map<List<ProductDto>>(filterProduct);
-                    return exisitingProduct;
+                    return new PaginatedResult<ProductDto>
+                    {
+                        Items = exisitingProduct,
+                    };
                 }
             }
             // sort the list of product dependes on size or color or meterial as desc or asc othwewise shows the default
-            filterProduct = sortBy?.ToLower() switch
+            filterProduct = paginationQuery.SortBy?.ToLower() switch
             {
-                "title" => sortOrder == "desc" ? filterProduct.OrderByDescending(p => p.Title) : filterProduct.OrderBy(p => p.Title),
-                "price" => sortOrder == "desc" ? filterProduct.OrderByDescending(p => p.Price) : filterProduct.OrderBy(p => p.Price),
+                "title" => paginationQuery.SortOrder == "desc" ? filterProduct.OrderByDescending(p => p.Title) : filterProduct.OrderBy(p => p.Title),
+                "price" => paginationQuery.SortOrder == "desc" ? filterProduct.OrderByDescending(p => p.Price) : filterProduct.OrderBy(p => p.Price),
                 _ => filterProduct.OrderBy(p => p.Title) // default 
             };
+
+            var totalCount =  filterProduct.Count();
+
             // return the result in pagination 
-            var paginationResult = filterProduct.Skip((pageNumber - 1) * pageSize).Take(pageSize);
+            var paginationResult = filterProduct.Skip((paginationQuery.PageNumber - 1) * paginationQuery.PageSize).Take(paginationQuery.PageSize);
             var productData = _mapper.Map<List<ProductDto>>(paginationResult);
-            return productData;
+            return new PaginatedResult<ProductDto>
+            {
+                Items = productData,
+                TotalCount = totalCount,
+                PageNumber = paginationQuery.PageNumber,
+                PageSize = paginationQuery.PageSize
+            };
         }
         catch (DbUpdateException dbEx)
         {

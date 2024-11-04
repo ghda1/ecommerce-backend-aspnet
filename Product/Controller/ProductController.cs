@@ -39,10 +39,13 @@ public class ProductController : ControllerBase
 
     // Get: "/api/v1/products" => get all products
     [HttpGet]
-    public async Task<IActionResult> GetProductsAsync(PaginationQuery paginationQuery)
+    public async Task<IActionResult> GetProductsAsync([FromQuery] PaginationQuery paginationQuery)
     {
         try
         {
+            Console.WriteLine($"------------------");
+            Console.WriteLine($"{paginationQuery.PageSize}");
+
             if (paginationQuery.PageNumber < 1 || paginationQuery.PageSize < 1)
             {
                 return ApiResponses.BadRequest("Page number and page size should be greater than 0.");

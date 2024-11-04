@@ -82,6 +82,10 @@ public class ProductService : IProductService
     {
         try
         {
+            Console.WriteLine($"-------------------------------------");
+
+            Console.WriteLine($"{paginationQuery.PageSize}");
+
             var products = await _appDbContext.Products.Include(p => p.Sizes).Include(p => p.Colors).ToListAsync();
             // using query to search for all the products whos matching the title otherwise return null
             var filterProduct = products.AsQueryable();
@@ -105,7 +109,7 @@ public class ProductService : IProductService
                 _ => filterProduct.OrderBy(p => p.Title) // default 
             };
 
-            var totalCount =  filterProduct.Count();
+            var totalCount = filterProduct.Count();
 
             // return the result in pagination 
             var paginationResult = filterProduct.Skip((paginationQuery.PageNumber - 1) * paginationQuery.PageSize).Take(paginationQuery.PageSize);

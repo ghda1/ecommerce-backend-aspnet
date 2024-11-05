@@ -13,7 +13,6 @@ public class AddressController : ControllerBase
     }
 
     // Post: "/api/v1/adresses" => create new address
-    [Authorize]
     [HttpPost]
     public async Task<IActionResult> CreateAdressAsync([FromBody] CreateAddressDto newAddress)
     {

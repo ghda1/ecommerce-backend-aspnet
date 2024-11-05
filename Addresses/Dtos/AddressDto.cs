@@ -2,6 +2,7 @@
 
 public class AddressDto
 {
+    public Guid AddressId { get; set; }
     public string AddressName { get; set; }
     public string StreetNumber { get; set; }
     public string StreetName { get; set; }

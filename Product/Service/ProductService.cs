@@ -82,10 +82,6 @@ public class ProductService : IProductService
     {
         try
         {
-            Console.WriteLine($"-------------------------------------");
-
-            Console.WriteLine($"{paginationQuery.PageSize}");
-
             var products = await _appDbContext.Products.Include(p => p.Sizes).Include(p => p.Colors).ToListAsync();
             // using query to search for all the products whos matching the title otherwise return null
             var filterProduct = products.AsQueryable();
@@ -139,7 +135,7 @@ public class ProductService : IProductService
     {
         try
         {
-            var product = await _appDbContext.Products.FindAsync(productId);
+            var product = await _appDbContext.Products.Include(p => p.Sizes).Include(p => p.Colors).SingleOrDefaultAsync(p => p.ProductId == productId);
             if (product == null)
             {
                 return null;

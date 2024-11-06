@@ -12,7 +12,7 @@ public class UsersController : ControllerBase
     }
 
     // Get: "/api/v1/users" => get all the users 
-    [Authorize (Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
     [HttpGet]
     public async Task<IActionResult> GetUsersAsync(int pageNumber = 1, int pageSize = 3, string? searchQuery = null, string? sortBy = null, string? sortOrder = "asc")
     {
@@ -40,7 +40,6 @@ public class UsersController : ControllerBase
     }
 
     // Get: "api/v1/users/{userId}" => get specific users by id 
-    [Authorize]
     [HttpGet("{userId}")]
     public async Task<IActionResult> GetUserByIdAsync(Guid userId)
     {

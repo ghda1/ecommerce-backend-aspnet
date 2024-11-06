@@ -50,7 +50,7 @@ public class AuthenticationController : ControllerBase
             return ApiResponses.BadRequest("Email/Password incorrect.");
         }
 
-        return ApiResponses.Success($"Login successfully, Token: {token}");
+        return ApiResponses.Success($"{token}");
     }
 
 }

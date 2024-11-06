@@ -73,7 +73,10 @@ namespace UserAuthenticationWebApi2.Services
             {
                 Subject = new ClaimsIdentity(new[]
                 {
-                new Claim(ClaimTypes.Role, user.IsAdmin ? "Admin" : "User")
+
+                new Claim(ClaimTypes.Role, user.IsAdmin ? "Admin" : "User"),
+                new Claim(ClaimTypes.Name, user.FirstName),
+                new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString())
             }),
                 Expires = DateTime.UtcNow.AddHours(2),
 

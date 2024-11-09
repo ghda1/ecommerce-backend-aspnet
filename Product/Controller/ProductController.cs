@@ -43,8 +43,6 @@ public class ProductController : ControllerBase
     {
         try
         {
-            Console.WriteLine($"------------------");
-            Console.WriteLine($"{paginationQuery.PageSize}");
 
             if (paginationQuery.PageNumber < 1 || paginationQuery.PageSize < 1)
             {
@@ -54,7 +52,7 @@ public class ProductController : ControllerBase
             var products = await _productService.GetProductsAsyncService(paginationQuery);
             if (products.Items.Count() == 0)
             {
-                return ApiResponses.NotFound("The list of products is empty or you try to search for not exisiting product.");
+                return ApiResponses.Success("The list of products is empty or you try to search for not exisiting product.");
             }
             return ApiResponses.Success(products, "Return the list of products successfully");
         }

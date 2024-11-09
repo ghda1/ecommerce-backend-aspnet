@@ -18,12 +18,12 @@ POST http://localhost:5125/api/v1/users/register
 Content-Type: application/json
 
 {
-  "FirstName": "Ghadah",
+  "FirstName": "Besho",
   "LastName": "Aljohani",
-  "Email": "ghadah@example.com",
-  "Password": "securePassword1422",
-  "Phone": "1234567890",
-  "IsAdmin": true
+  "Email": "besho@example.com",
+  "Password": "123456789",
+  "Phone": "0590796001",
+  "IsAdmin": false
 }
 
 ###

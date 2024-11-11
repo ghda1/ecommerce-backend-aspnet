@@ -187,7 +187,7 @@ public class ProductService : IProductService
         try
         {
 
-            var product = await _appDbContext.Products.FindAsync(productId);
+            var product = await _appDbContext.Products.Include(p => p.Sizes).Include(p => p.Colors).FirstOrDefaultAsync(p => p.ProductId == productId);
 
             if (product == null)
             {
@@ -196,51 +196,37 @@ public class ProductService : IProductService
 
             product.Material = updateProduct.Material ?? product.Material;
             product.Image = updateProduct.Image ?? product.Image;
-            Console.WriteLine($"-------------------------------");
-            
-            Console.WriteLine($"{updateProduct.Title}");
-            Console.WriteLine($"{product.Title}");
             product.Title = updateProduct.Title ?? product.Title;
             product.Price = updateProduct.Price ?? product.Price;
 
             if (updateProduct.SizeIds != null)
             {
-                List<Size> listSizes = new List<Size>();
+                product.Sizes.Clear();
                 foreach (var sizeId in updateProduct.SizeIds)
                 {
                     var size = await _appDbContext.Sizes.FindAsync(sizeId);
-
-                    if (size != null)
+                    if (size == null)
                     {
-                        listSizes.Add(size);
+                        throw new ApplicationException($"Size ID {sizeId} does not exist in the sizes table.");
                     }
-                    else
-                    {
-                        throw new ApplicationException($"This size id {sizeId} does not exist in the sizes Db");
-                    }
+                    product.Sizes.Add(size);
                 }
-                product.Sizes = listSizes;
-
             }
+
 
             if (updateProduct.ColorIds != null)
             {
-                List<Color> listColors = new List<Color>();
+                product.Colors.Clear();
                 foreach (var colorId in updateProduct.ColorIds)
                 {
                     var color = await _appDbContext.Colors.FindAsync(colorId);
-                    if (color != null)
+                    if (color == null)
                     {
-                        listColors.Add(color);
+                        throw new ApplicationException($"Color ID {colorId} does not exist in the colors table.");
                     }
-                    else
-                    {
-                        throw new ApplicationException($"This color id {colorId} does not exist in the colors Db");
-                    }
+                    product.Colors.Add(color);
                 }
-                product.Colors = listColors;
             }
-
             _appDbContext.Products.Update(product);
             await _appDbContext.SaveChangesAsync();
 

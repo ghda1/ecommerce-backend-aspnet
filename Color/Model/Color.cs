@@ -13,3 +13,6 @@ public class Color
     [JsonIgnore]
     public List<Product> Products { get; set; }
 }
+// ColorId          ProductId 
+// 1                  234
+// 2                  3223

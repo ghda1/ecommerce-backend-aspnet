@@ -13,4 +13,7 @@ public class Size
     public List<Product> Products { get; set; }
 
 }
+// sizeId           ProductId
+// 1                123123312
+// 2                322323329
 

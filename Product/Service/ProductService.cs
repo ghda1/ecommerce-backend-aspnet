@@ -186,7 +186,9 @@ public class ProductService : IProductService
     {
         try
         {
+
             var product = await _appDbContext.Products.FindAsync(productId);
+
             if (product == null)
             {
                 return null;
@@ -194,6 +196,10 @@ public class ProductService : IProductService
 
             product.Material = updateProduct.Material ?? product.Material;
             product.Image = updateProduct.Image ?? product.Image;
+            Console.WriteLine($"-------------------------------");
+            
+            Console.WriteLine($"{updateProduct.Title}");
+            Console.WriteLine($"{product.Title}");
             product.Title = updateProduct.Title ?? product.Title;
             product.Price = updateProduct.Price ?? product.Price;
 
@@ -239,6 +245,8 @@ public class ProductService : IProductService
             await _appDbContext.SaveChangesAsync();
 
             var productData = _mapper.Map<ProductDto>(product);
+            Console.WriteLine($"{productData}");
+
             return productData;
         }
         catch (DbUpdateException dbEx)

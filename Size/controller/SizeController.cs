@@ -15,7 +15,6 @@ public class SizeController : ControllerBase
     }
 
     // GET: api/sizes/{id}
-    [Authorize]
     [HttpGet("{id}")]
     public async Task<IActionResult> GetSizeById(Guid id)
     {
@@ -41,7 +40,6 @@ public class SizeController : ControllerBase
     }
 
     // GET: api/sizes
-    [Authorize(Roles = "Admin")]
     [HttpGet]
     public async Task<IActionResult> GetAllSizes()
     {

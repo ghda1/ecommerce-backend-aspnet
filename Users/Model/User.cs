@@ -21,5 +21,5 @@ public class User
 
     // one user has many orders
     [JsonIgnore]
-    public List<Order> Orders {get; set;}
+    public List<Order> Orders { get; set; }
 }

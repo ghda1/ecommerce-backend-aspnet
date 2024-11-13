@@ -65,7 +65,7 @@ public class UserService : IUserService
     {
         try
         {
-            var user = await _appDbContext.Users.FindAsync(userId);
+            var user = await _appDbContext.Users.Include(u => u.Addresses).FirstOrDefaultAsync(u => u.UserId == userId);
             if (user == null)
             {
                 return null;

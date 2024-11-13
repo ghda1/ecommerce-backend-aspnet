@@ -27,7 +27,7 @@ Content-Type: application/json
 }
 
 ###
-Get http://localhost:5125/api/v1/users/d01e7ab1-2df3-4f25-b35a-ab7d593b50eb
+Get http://localhost:5125/api/v1/users/
 ###
 Put http://localhost:5125/api/v1/users/d01e7ab1-2df3-4f25-b35a-ab7d593b50eb
 Content-Type: application/json

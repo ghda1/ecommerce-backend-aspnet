@@ -26,13 +26,15 @@ public class AddressService : IAddressService
         try
         {
             var address = _mapper.Map<Address>(newAddress);
-            var user = await _appDbContext.Users.FirstOrDefaultAsync(c => c.UserId == newAddress.UserId);
+            var user = await _appDbContext.Users.FindAsync(newAddress.UserId);
             if (user == null)
             {
                 throw new Exception("You can't create address for not exisiting user.");
             }
             address.User = user;
             var addressAdded = await _appDbContext.Addresses.AddAsync(address);
+            user.Addresses.Add(address);
+            _appDbContext.Users.Update(user);
             await _appDbContext.SaveChangesAsync();
             var addressData = _mapper.Map<AddressDto>(address);
             return addressData;

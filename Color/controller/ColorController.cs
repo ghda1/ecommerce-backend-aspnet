@@ -15,7 +15,6 @@ public class ColorController : ControllerBase
     }
 
     // GET: api/colors/{id}
-    [Authorize]
     [HttpGet("{id}")]
     public async Task<IActionResult> GetColorById(Guid id)
     {
@@ -41,7 +40,6 @@ public class ColorController : ControllerBase
     }
 
     // GET: api/color
-    [Authorize(Roles = "Admin")]
     [HttpGet]
     public async Task<IActionResult> GetAllColors()
     {

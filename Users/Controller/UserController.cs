@@ -40,6 +40,7 @@ public class UsersController : ControllerBase
     }
 
     // Get: "api/v1/users/{userId}" => get specific users by id 
+    [Authorize]
     [HttpGet("{userId}")]
     public async Task<IActionResult> GetUserByIdAsync(Guid userId)
     {

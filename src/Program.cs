@@ -33,7 +33,8 @@ builder.Services.AddCors(options =>
     {
         options.AddPolicy("MyAllowSpecificOrigins", builder =>
         {
-            builder.WithOrigins("https://teenest.netlify.app"
+            builder.WithOrigins("https://teenest.netlify.app",
+            "http://localhost:5173"
                     )
                   .AllowAnyMethod()
                   .AllowAnyHeader()

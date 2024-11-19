@@ -1,7 +1,7 @@
 # Compiled output
 bin/
 obj/
-
+test/
 # User-specific files
 .vscode/
 .vs/
@@ -30,5 +30,3 @@ Generated_Code/
 *.db
 *.sqlite
 *.sqlite3
-
-*.http

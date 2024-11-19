@@ -30,3 +30,5 @@ Generated_Code/
 *.db
 *.sqlite
 *.sqlite3
+
+sda-3-onsite-backend-teamwork.http

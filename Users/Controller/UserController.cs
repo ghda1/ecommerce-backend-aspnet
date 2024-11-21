@@ -22,8 +22,8 @@ public class UsersController : ControllerBase
             {
                 return ApiResponses.BadRequest("Page number and page size should be greater than 0.");
             }
-            var users = await _usersService.GetUsersAsyncService(paginationQuery.PageNumber, paginationQuery.PageSize, paginationQuery.SearchQuery, paginationQuery.SortBy, paginationQuery.SortOrder);
-            if (users.Count() == 0)
+            var users = await _usersService.GetUsersAsyncService(paginationQuery);
+            if (users.Items.Count() == 0)
             {
                 return ApiResponses.NotFound("The list of users is empty or you try to search for not exisiting user name.");
             }

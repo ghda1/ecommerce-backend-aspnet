@@ -14,15 +14,15 @@ public class UsersController : ControllerBase
     // Get: "/api/v1/users" => get all the users 
     [Authorize(Roles = "Admin")]
     [HttpGet]
-    public async Task<IActionResult> GetUsersAsync(int pageNumber = 1, int pageSize = 3, string? searchQuery = null, string? sortBy = null, string? sortOrder = "asc")
+    public async Task<IActionResult> GetUsersAsync([FromQuery] PaginationQuery paginationQuery)
     {
         try
         {
-            if (pageNumber < 1 || pageSize < 1)
+            if (paginationQuery.PageNumber < 1 || paginationQuery.PageSize < 1)
             {
                 return ApiResponses.BadRequest("Page number and page size should be greater than 0.");
             }
-            var users = await _usersService.GetUsersAsyncService(pageNumber, pageSize, searchQuery, sortBy, sortOrder);
+            var users = await _usersService.GetUsersAsyncService(paginationQuery.PageNumber, paginationQuery.PageSize, paginationQuery.SearchQuery, paginationQuery.SortBy, paginationQuery.SortOrder);
             if (users.Count() == 0)
             {
                 return ApiResponses.NotFound("The list of users is empty or you try to search for not exisiting user name.");

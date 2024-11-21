@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 public interface IUserService
 {
-    Task<List<UserDto>> GetUsersAsyncService(int pageNumber, int pageSize, string searchQuery, string sortBy, string sortOrder);
+    Task<PaginatedResult<UserDto>> GetUsersAsyncService(PaginationQuery paginationQuery);
     Task<UserDto?> GetUserByIdAsyncService(Guid userId);
     Task<bool> DeleteUserByIdAsyncService(Guid userId);
     Task<UserDto?> UpdateUserByIdAsyncService(Guid userId, UpdateUserDto updateUser);
@@ -19,33 +19,44 @@ public class UserService : IUserService
         _appDbContext = appDbContext;
         _mapper = mapper;
     }
-    public async Task<List<UserDto>> GetUsersAsyncService(int pageNumber, int pageSize, string searchQuery, string sortBy, string sortOrder)
+    public async Task<PaginatedResult<UserDto>> GetUsersAsyncService(PaginationQuery paginationQuery)
     {
         try
         {
             var users = await _appDbContext.Users.ToListAsync();
             // using query to search for all the users whos matching the name otherwise return null
             var filterUsers = users.AsQueryable();
-            if (!string.IsNullOrEmpty(searchQuery))
+            if (!string.IsNullOrEmpty(paginationQuery.SearchQuery))
             {
-                filterUsers = filterUsers.Where(c => c.FirstName.Contains(searchQuery, StringComparison.OrdinalIgnoreCase));
+                filterUsers = filterUsers.Where(c => c.FirstName.Contains(paginationQuery.SearchQuery, StringComparison.OrdinalIgnoreCase));
                 if (filterUsers.Count() == 0)
                 {
-                    var exisitingUser = _mapper.Map<List<UserDto>>(filterUsers);
-                    return exisitingUser;
+                    var exisitingUsers = _mapper.Map<List<UserDto>>(filterUsers);
+                    return new PaginatedResult<UserDto>
+                    {
+                        Items = exisitingUsers
+                    };
                 }
             }
             // sort the list of users dependes on first or last name as desc or asc othwewise shows the default
-            filterUsers = sortBy?.ToLower() switch
+            filterUsers = paginationQuery.SortBy?.ToLower() switch
             {
-                "firstname" => sortOrder == "desc" ? filterUsers.OrderByDescending(c => c.FirstName) : filterUsers.OrderBy(c => c.FirstName),
-                "lastname" => sortOrder == "desc" ? filterUsers.OrderByDescending(c => c.LastName) : filterUsers.OrderBy(c => c.LastName),
+                "firstname" => paginationQuery.SortOrder == "desc" ? filterUsers.OrderByDescending(c => c.FirstName) : filterUsers.OrderBy(c => c.FirstName),
+                "lastname" => paginationQuery.SortOrder == "desc" ? filterUsers.OrderByDescending(c => c.LastName) : filterUsers.OrderBy(c => c.LastName),
                 _ => filterUsers.OrderBy(c => c.FirstName) // default 
             };
+            var totalCount = filterUsers.Count();
+
             // return the result in pagination 
-            var paginationResult = filterUsers.Skip((pageNumber - 1) * pageSize).Take(pageSize);
+            var paginationResult = filterUsers.Skip((paginationQuery.PageNumber - 1) * paginationQuery.PageSize).Take(paginationQuery.PageSize);
             var userData = _mapper.Map<List<UserDto>>(paginationResult);
-            return userData;
+            return new PaginatedResult<UserDto>
+            {
+                Items = userData,
+                TotalCount = totalCount,
+                PageNumber = paginationQuery.PageNumber,
+                PageSize = paginationQuery.PageSize
+            };
         }
         catch (DbUpdateException dbEx)
         {

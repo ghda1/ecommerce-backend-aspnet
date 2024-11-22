@@ -43,12 +43,12 @@ public class AddressController : ControllerBase
     // Get: "/api/v1/addresses" => get all the addresses 
     [Authorize(Roles = "Admin")]
     [HttpGet]
-    public async Task<IActionResult> GetAddressAsync(int pageNumber = 1, int pageSize = 3, string? searchQuery = null, string? sortBy = null, string? sortOrder = "asc")
+    public async Task<IActionResult> GetAddressAsync([FromQuery] PaginationQuery paginationQuery)
     {
         try
         {
-            var addresses = await _addressService.GetAddressesAsyncService(pageNumber, pageSize, searchQuery, sortBy, sortOrder);
-            if (addresses.Count() == 0)
+            var addresses = await _addressService.GetAddressesAsyncService(paginationQuery);
+            if (addresses.Items.Count() == 0)
             {
                 return ApiResponses.NotFound("The list of address is empty or you try to search for not exisiting address name.");
             }

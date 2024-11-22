@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 public interface IAddressService
 {
     Task<AddressDto> CreateAddressAsyncService(CreateAddressDto newAddress);
-    Task<List<AddressDto>> GetAddressesAsyncService(int pageNumber, int pageSize, string searchQuery, string sortBy, string sortOrder);
+    Task<PaginatedResult<AddressDto>> GetAddressesAsyncService(PaginationQuery paginationQuery);
     Task<AddressDto?> GetAddressByIdAsyncService(Guid addressId);
     Task<bool> DeleteAddressByIdAsyncService(Guid addressId);
     Task<AddressDto?> UpdateAddressByIdAsyncService(Guid addressId, UpdateAddressDto updateAddress);
@@ -54,33 +54,44 @@ public class AddressService : IAddressService
 
     }
 
-    public async Task<List<AddressDto>> GetAddressesAsyncService(int pageNumber, int pageSize, string searchQuery, string sortBy, string sortOrder)
+    public async Task<PaginatedResult<AddressDto>> GetAddressesAsyncService(PaginationQuery paginationQuery)
     {
         try
         {
             var addresses = await _appDbContext.Addresses.Include(a => a.User).ToListAsync();
             // using query to search for all the users whos matching the name otherwise return null
             var filterAddresses = addresses.AsQueryable();
-            if (!string.IsNullOrEmpty(searchQuery))
+            if (!string.IsNullOrEmpty(paginationQuery.SearchQuery))
             {
-                filterAddresses = filterAddresses.Where(a => a.AddressName.Contains(searchQuery, StringComparison.OrdinalIgnoreCase));
+                filterAddresses = filterAddresses.Where(a => a.AddressName.Contains(paginationQuery.SearchQuery, StringComparison.OrdinalIgnoreCase));
                 if (filterAddresses.Count() == 0)
                 {
                     var exisitingAddress = _mapper.Map<List<AddressDto>>(filterAddresses);
-                    return exisitingAddress;
+                    return new PaginatedResult<AddressDto>
+                    {
+                        Items = exisitingAddress
+                    };
                 }
             }
             // sort the list of address dependes on their city or state as desc or asc othwewise shows the default
-            filterAddresses = sortBy?.ToLower() switch
+            filterAddresses = paginationQuery.SortBy?.ToLower() switch
             {
-                "city" => sortOrder == "desc" ? filterAddresses.OrderByDescending(a => a.City) : filterAddresses.OrderBy(a => a.City),
-                "state" => sortOrder == "desc" ? filterAddresses.OrderByDescending(a => a.State) : filterAddresses.OrderBy(a => a.State),
+                "city" => paginationQuery.SortOrder == "desc" ? filterAddresses.OrderByDescending(a => a.City) : filterAddresses.OrderBy(a => a.City),
+                "state" => paginationQuery.SortOrder == "desc" ? filterAddresses.OrderByDescending(a => a.State) : filterAddresses.OrderBy(a => a.State),
                 _ => filterAddresses.OrderBy(a => a.City) // default 
             };
+            var totalCount = filterAddresses.Count();
+
             // return the pagination result
-            var paginationResult = filterAddresses.Skip((pageNumber - 1) * pageSize).Take(pageSize);
+            var paginationResult = filterAddresses.Skip((paginationQuery.PageNumber - 1) * paginationQuery.PageSize).Take(paginationQuery.PageSize);
             var addressData = _mapper.Map<List<AddressDto>>(paginationResult);
-            return addressData;
+            return new PaginatedResult<AddressDto>
+            {
+                Items = addressData,
+                TotalCount = totalCount,
+                PageNumber = paginationQuery.PageNumber,
+                PageSize = paginationQuery.PageSize
+            };
         }
         catch (DbUpdateException dbEx)
         {
